@@ -1,0 +1,39 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    padding-right: 8rem;
+    padding-left: 8rem;
+    font-family: 'Lato', sans-serif;
+    font-size:20px;
+}
+.card-container {
+    padding-right: 8rem;
+    padding-left: 8rem;
+}
+.button-container{
+    max-width:17rem;
+}
+
+.spaced input[type="radio"] {
+    margin-right: 10px;
+}
+
+.checkBoxSpace input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.card-body{
+}
+.title-container {
+    padding-right: 8rem;
+    padding-left: 8rem;
+}
+@media screen and (min-width: 768px) {
+    .jumbotron {
+        margin-top: 20px;
+    }
+
+    .body-content {
+        padding: 0;
+    }
+}

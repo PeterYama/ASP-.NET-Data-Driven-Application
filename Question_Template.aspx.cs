@@ -25,6 +25,8 @@ Application Flow:
 -if Multiple Choice was selected, it will store the answers in a string[] userSelectionArray
 -fillList() function will fill an UserObject, than add to List<userAnswers>, Than Add to Session.
 -endButton will get all the data and save to the database after a clean-up in the list, removing all the garbage(null)
+-Register and Search page is created and the button to access then will be displayed in the end of the survey
+--Try Catch can be found in the line 347, checking if the user input exceeds the number of 
 */
 namespace Data_Driven_6518_Survey_App
 {
@@ -48,6 +50,7 @@ namespace Data_Driven_6518_Survey_App
         {
             if (!IsPostBack)
             {
+                //Create a random user ID and use the default quesiton number
                 rand = new Random();
                 userID = rand.Next();
                 HttpContext.Current.Session["userID"] = userID;
@@ -57,12 +60,14 @@ namespace Data_Driven_6518_Survey_App
             }
             else
             {
+                //set the next question ID from Session
                 nextQuestionID = (string)HttpContext.Current.Session["nextQuestionID"];
             };
         }
         //Get question based on the question ID from session
         public void getQuestion(string nextQuestionID)
         {
+            //Check Extra Questions
             if ((string)HttpContext.Current.Session["ExtraQuestion"] == "bank")
             {
                 nextQuestionID = "8";
@@ -78,7 +83,7 @@ namespace Data_Driven_6518_Survey_App
                 nextQuestionID = "10";
                 HttpContext.Current.Session["ExtraQuestion"] = "";
             }
-
+            //if none use default
             db = new DatabaseManager();
             queryString = "select * from question where Q_ID = " + nextQuestionID;
             using (SqlConnection conn = db.openConnection())
@@ -93,9 +98,12 @@ namespace Data_Driven_6518_Survey_App
                     id_lbl.Text = Convert.ToString(reader["Q_ID"]);
                     questionHistory = (List<string>)HttpContext.Current.Session["currentType"];
                     questionHistory.Add(type);
+                    //Adding To session here only to use in the runtime
                     HttpContext.Current.Session["currentType"] = questionHistory;
                     HttpContext.Current.Session["nextQuestionID"] = Convert.ToString(reader["Next_Q_ID"]);
                     HttpContext.Current.Session["currentQuestionID"] = (int)reader["Q_ID"];
+
+                    //Get Options
                     getOptions(currentQuestionID, type);
                 }
                 else
@@ -110,6 +118,7 @@ namespace Data_Driven_6518_Survey_App
         {
             using (SqlConnection conn = db.openConnection())
             {
+                //Took me a while to understand that Option and User are reserved keywords there fore [] should be added
                 queryString = "Select * from [Option] where Que_ID = " + question_ID;
                 cmd = new SqlCommand(queryString, conn);
                 reader = cmd.ExecuteReader();
@@ -120,6 +129,7 @@ namespace Data_Driven_6518_Survey_App
                     //ListItem item = new ListItem((string)reader["Opt_Text"], reader["Opt_ID"].ToString());
                     string textBoxLabel = (string)reader["Opt_Text"];
 
+                    //Check the question Type and Render or make Visible the Corresponding UI Component
                     if (type == "checkbox")
                     {
                         checkBoxList.Items.Clear();
@@ -162,6 +172,7 @@ namespace Data_Driven_6518_Survey_App
             }
         }
 
+        //Get user input details / user ID and save to user Object
         public void fillList(int question_id, string userSelection, string answerText = "null")
         {
             userSelectionArray = new string[10];
@@ -180,9 +191,13 @@ namespace Data_Driven_6518_Survey_App
             userID = (int)HttpContext.Current.Session["userID"];
             userObj.user_ID = userID;
 
+            //Record the new user to Session
             SessionManager.RecordUserToSession(userObj);
         }
 
+        //Next Button Click
+        //should check what is the current type and do the Logic
+        //Example turn Disposing UI components, filling the list of user and Getting the next question
         protected void next_btn_Click1(object sender, EventArgs e)
         {
             int questionId = (int)HttpContext.Current.Session["currentQuestionID"];
@@ -230,6 +245,7 @@ namespace Data_Driven_6518_Survey_App
             };
         }
 
+        //save to the global multipleSelection if the user has selected multiple items
         protected void BoxClicked(object sender, EventArgs e)
         {
             multipleSelection = new List<string>();
@@ -260,6 +276,7 @@ namespace Data_Driven_6518_Survey_App
             }
         }
 
+        //This is a debugging buttom to check the User Object that is in the Session List
         protected void Check_Session_Click(object sender, EventArgs e)
         {
             List<userAnswers> list = SessionManager.retrieveListFromSession();
@@ -283,6 +300,8 @@ namespace Data_Driven_6518_Survey_App
                
             }
         }
+
+        //radio button does not have multiple choice, therefore userSelection is used
         protected void radioButtonList_SelectedIndexChanged(object sender, EventArgs e)
         {
             for (int i = 0; i < radioButtonList.Items.Count; i++)
@@ -294,11 +313,9 @@ namespace Data_Driven_6518_Survey_App
             }
         }
 
+        //endButton is removing all the null values and saving to the database
         protected void endButton_Click(object sender, EventArgs e)
         {
-            //if the question was radio button, use userSelection
-            //if the queston was checkBox, use multipleSelection
-
             List<userAnswers> list = SessionManager.retrieveListFromSession();
             db = new DatabaseManager();
             using (SqlConnection conn = db.openConnection())
@@ -316,14 +333,16 @@ namespace Data_Driven_6518_Survey_App
 
                 foreach (userAnswers item in list)
                 {
+                    //This function should Alert the user if there is an Question pending.
+                    //Probably redirecting the user to the question that is missing in the next assignment
                     if ((item.userSelection == null) && (item.answerText == "null"))
                     {
                         option_lbl.Text = " Some options are missing";
                     }
 
+                    //Check if the number of Characters exceed the ones set on the database
                     try
                     {
-                        //Check if the number of Characters exceed the ones set on the database
                         queryString = "Insert Into Answer (U_ID, Que_ID, Ans_Text) " +
                         "VALUES (" + item.user_ID + ", " + item.question_ID + ", '" + item.answerText + "')";
                         cmd = new SqlCommand(queryString, conn);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Web;
 using System.Web.UI.WebControls;
-/*
+/*g
 Hello Matt, I ended up using isPostBack
 I know the way I did it is quit different than what you have explained, but it's working =)
 
@@ -32,6 +32,7 @@ namespace Data_Driven_6518_Survey_App
 {
     public partial class _Default : System.Web.UI.Page
     {
+        //Define Globals
         int currentQuestionID;
         DatabaseManager db;
         SqlCommand cmd;
@@ -322,12 +323,11 @@ namespace Data_Driven_6518_Survey_App
             {
                 //Register user IP , Date and user_ID to User table
                 //Refering to StackoverFlow, userSessionID approach instead o using Users IP is recommended
-                DateTime thisDay = DateTime.Today;
+                DateTime thisDay = DateTime.Now;
                 var userSessionID = HttpContext.Current.Session.SessionID;
                 int currentID = (int)HttpContext.Current.Session["userID"];
                 queryString = "Insert Into [User] (U_Time, U_IP, U_ID) " +
                     "VALUES ('" + thisDay + "', '" + userSessionID + "','" + currentID + "')";
-
                 cmd = new SqlCommand(queryString, conn);
                 cmd.ExecuteNonQuery();
 
@@ -343,8 +343,17 @@ namespace Data_Driven_6518_Survey_App
                     //Check if the number of Characters exceed the ones set on the database
                     try
                     {
+                        string text;
+                        if (item.answerText == "null")
+                        {
+                            text = item.userSelection;
+                        }
+                        else
+                        {
+                            text = item.answerText;
+                        }
                         queryString = "Insert Into Answer (U_ID, Que_ID, Ans_Text) " +
-                        "VALUES (" + item.user_ID + ", " + item.question_ID + ", '" + item.answerText + "')";
+                        "VALUES (" + item.user_ID + ", " + item.question_ID + ", '" + text + "')";
                         cmd = new SqlCommand(queryString, conn);
                         cmd.ExecuteNonQuery();
                     }

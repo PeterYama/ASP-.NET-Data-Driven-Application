@@ -13,5 +13,14 @@ namespace Data_Driven_6518_Survey_App
 
     public partial class RegistrationForm
     {
+
+        /// <summary>
+        /// userName_txt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText userName_txt;
     }
 }

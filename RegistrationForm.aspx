@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Your Name *" value=""/>
+                                <input id="userName_txt" runat="server" class="form-control" placeholder="Your Name *" value=""/>
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Phone Number *" value=""/>

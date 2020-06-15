@@ -23,5 +23,11 @@ namespace Data_Driven_6518_Survey_App
             conn.Open();
             return conn;
         }
+
+        public SqlConnection closeConnection()
+        {
+            conn.Close();
+            return conn;
+        }
     }
 }

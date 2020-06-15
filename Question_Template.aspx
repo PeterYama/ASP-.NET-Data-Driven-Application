@@ -67,7 +67,7 @@
                 </div>
                 <asp:Button ID="Check_Session" 
                     class="btn btn-secondary" 
-                    Visible="false"
+                    Visible="true"
                     runat="server" 
                     OnClick="Check_Session_Click" 
                     Text="Check " />
@@ -77,6 +77,7 @@
                     runat="server" 
                     Text="Register" 
                     OnClick="register_btn_Click1" />
+
                 <asp:Button ID="staff_search_btn" 
                     Visible="false"
                     class="btn btn-success" 

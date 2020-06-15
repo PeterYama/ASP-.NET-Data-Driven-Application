@@ -12,9 +12,9 @@ namespace Data_Driven_6518_Survey_App
 			set { _checkBoxValues = value; }
 		}
 
-		private string _opt_id;
+		private int _opt_id;
 
-		public string opt_id
+		public int opt_id
 		{
 			get { return _opt_id; }
 			set { _opt_id = value; }
